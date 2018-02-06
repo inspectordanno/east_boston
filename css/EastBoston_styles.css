@@ -234,11 +234,11 @@ span.EastBoston_footer {
 
 .line {
     fill: none;
-    stroke: #ffab00;
+    /* stroke: #ffab00; */
     stroke-width: 3;
 }
 
 .dot {
-    fill: #ffab00;
+    fill: "black";
     stroke: #fff;
 }

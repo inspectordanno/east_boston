@@ -1,7 +1,7 @@
 
 // margin template from https://bl.ocks.org/d3noob/402dd382a51a4f6eea487f9a35566de0
 // set the dimensions and margins of the graph
-var margin = {top: 20, right: 20, bottom: 30, left: 50},
+var margin = {top: 20, right: 60, bottom: 30, left: 50},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
@@ -17,7 +17,17 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
 
     var averages = {};
 
-    d3.csv("js/sample_rents.csv", function(error, rents){
+    var thirtyPercent =
+    [ {year: 2013, avg: (48704/12)*.30},
+      {year: 2014, avg: (50336/12)*.30},
+      {year: 2015, avg: (51097/12)*.30},
+      {year: 2016, avg: (52152/12)*.30},
+      {year: 2017, avg: (54000/12)*.30}
+    ];
+
+    console.log(thirtyPercent);
+
+    d3.csv("js/merged_rents.csv", function(error, rents){
 
 
       // averages["test"] = 0;
@@ -63,7 +73,7 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
     // Y scale
 
     var yScale = d3.scaleLinear()
-      .domain([0, 1000])
+      .domain([0, 3000])
       .range([height, 0]);
 
 
@@ -83,6 +93,10 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
 
     // call the x axis in a group tag
 
+    var dollarFormat = function(d) {
+      return '$' + d;
+    };
+
     svg.append("g")
       .attr("class", "x axis")
       .attr("transform", `translate(0,${height})`)
@@ -92,45 +106,131 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
 
     svg.append("g")
       .attr("class", "y axis")
-      .call(d3.axisLeft(yScale)); //create an axis component with d3.axisLeft
+      .call(d3.axisLeft(yScale).tickFormat(dollarFormat)); //create an axis component with d3.axisLeft
 
     // append the path, bind the data, and call the line generator, use attr to style lines
 
 
+    //studio apartment
+
     svg.append("path")
       .datum(averages[0]) //binds data to the line
       .attr("class", "line") //assigns a class for styling
-      .attr("d", line); //calls the line generator
+      .attr("d", line) //calls the line generator
 
+
+
+    //1 bedroom apartment
       svg.append("path")
         .datum(averages[1]) //binds data to the line
         .attr("class", "line") //assigns a class for styling
-        .attr("d", line); //calls the line generator
+        .attr("d", line) //calls the line generator
+        .attr("stroke", "	#aad356" ); //stroke green
 
+    //2 bedroom apartment
         svg.append("path")
           .datum(averages[2]) //binds data to the line
           .attr("class", "line") //assigns a class for styling
-          .attr("d", line); //calls the line generator
+          .attr("d", line) //calls the line generator
 
+
+    //3 bedroom apartment
           svg.append("path")
             .datum(averages[3]) //binds data to the line
             .attr("class", "line") //assigns a class for styling
-            .attr("d", line); //calls the line generator
+            .attr("d", line) //calls the line generator
+            .attr("stroke", "#189aa8" ); //stroke blue
+
+    //thirty percent median household income
+          svg.append("path")
+            .datum(thirtyPercent) //binds data to the line
+            .attr("class", "line") //assigns a class for styling
+            .attr("d", line) //calls the line generator
+            .attr("stroke", "#e45525" ); //stroke red
 
       // appends a circle for each datapoint
 
-      svg.selectAll(".dot")
-        .data(averages[0])
+      var br1 = svg.selectAll(".dots_1br")
+        .data(averages[1])
         .enter()
-        .append("circle") //append a circle
-        .attr("class", "dot") //assign a class for styling
-        .attr("cx", function(d, i) {
-              return xScale(d.year);
+        .append("g")
+          .attr("transform", function(d) {
+            console.log("translate(" + xScale(d.year) + "," + yScale(d.avg) +")");
+            return "translate(" + xScale(d.year) + "," + yScale(d.avg) +")";
+          });
+
+        br1.append("circle")
+          .attr("class", "dot")
+          .attr("r", 4);
+
+        var br3 = svg.selectAll(".dots_3br")
+          .data(averages[3])
+          .enter()
+          .append("g")
+            .attr("transform", function(d) {
+              console.log("translate(" + xScale(d.year) + "," + yScale(d.avg) +")");
+              return "translate(" + xScale(d.year) + "," + yScale(d.avg) +")";
+            });
+
+          br3.append("circle")
+            .attr("class", "dot")
+            .attr("r", 4);
+
+        var household = svg.selectAll("thirtyPercent")
+          .data(thirtyPercent)
+          .enter()
+          .append("g")
+            .attr("transform", function(d) {
+              console.log("translate(" + xScale(d.year) + "," + yScale(d.avg) +")");
+              return "translate(" + xScale(d.year) + "," + yScale(d.avg) +")";
             })
-        .attr("cy", function(d) {
-              return yScale(d.avg);
-            })
-        .attr("r", 5);
+
+          household.append("circle")
+            .attr("class", "dot")
+            .attr("r", 4);
+
+        br1.append("text")
+          .attr("dx", ".50em")
+          .attr("dy",".90em")
+          .text(function(d){return "$"+ Math.round(d.avg)});
+
+
+        br3.append("text")
+          .attr("dx", ".50em")
+          .attr("dy",".90em")
+          .text(function(d){return "$"+ Math.round(d.avg)});
+
+
+        household.append("text")
+          .attr("dx", ".50em")
+          .attr("dy",".90em")
+          .text(function(d){return "$"+ Math.round(d.avg)});
+
+          svg.append("text")
+            .attr("x", 750)
+            .attr("y", 40)
+            .text("average 3BR rent")
+            .attr("fill", "#189aa8")
+            .attr("font-weight", "bold");
+
+          svg.append("text")
+            .attr("x", 750)
+            .attr("y", 145)
+            .text("average 1BR rent")
+            .attr("fill", "#aad356")
+            .attr("font-weight", "bold");
+
+          svg.append("text")
+            .attr("x", 750)
+            .attr("y", 235)
+            .text("rent poverty line")
+            .attr("fill", "#e45525")
+            .attr("font-weight", "bold");
+
+
+
+
+
 
 
 
