@@ -1,9 +1,9 @@
 
 // margin template from https://bl.ocks.org/d3noob/402dd382a51a4f6eea487f9a35566de0
 // set the dimensions and margins of the graph
-var margin = {top: 20, right: 60, bottom: 30, left: 50},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+    var margin = {top: 20, right: 60, bottom: 30, left: 50};
+    var width = document.getElementById("resize").offsetWidth - margin.left - margin.right;
+    var height = document.getElementById("resize").offsetHeight -  margin.top - margin.bottom;
 
     // append the svg obgect to the body of the page
     // appends a 'group' element to 'svg'
@@ -207,22 +207,25 @@ var margin = {top: 20, right: 60, bottom: 30, left: 50},
           .text(function(d){return "$"+ Math.round(d.avg)});
 
           svg.append("text")
-            .attr("x", 750)
-            .attr("y", 40)
+            .attr("x", width)
+            .attr("y", yScale(averages[3][4]["avg"]) - 10)
+            .attr("text-anchor","end")
             .text("average 3BR rent")
             .attr("fill", "#189aa8")
             .attr("font-weight", "bold");
 
           svg.append("text")
-            .attr("x", 750)
-            .attr("y", 145)
+            .attr("x", width)
+            .attr("y", yScale(averages[1][4]["avg"]) - 10)
+            .attr("text-anchor","end")
             .text("average 1BR rent")
             .attr("fill", "#aad356")
             .attr("font-weight", "bold");
 
           svg.append("text")
-            .attr("x", 750)
-            .attr("y", 235)
+            .attr("x", width)
+            .attr("y", yScale(thirtyPercent[4]["avg"]) - 10)
+            .attr("text-anchor","end")
             .text("rent poverty line")
             .attr("fill", "#e45525")
             .attr("font-weight", "bold");
