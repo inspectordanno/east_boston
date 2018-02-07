@@ -41,8 +41,7 @@
 
         var subset = rents.filter(function(d){
           return d.no_bedrooms == no;
-
-        })
+        });
 
            for (var year = 2013; year <= 2017; year++) {
 
@@ -116,7 +115,7 @@
     svg.append("path")
       .datum(averages[0]) //binds data to the line
       .attr("class", "line") //assigns a class for styling
-      .attr("d", line) //calls the line generator
+      .attr("d", line); //calls the line generator
 
 
 
@@ -131,7 +130,7 @@
         svg.append("path")
           .datum(averages[2]) //binds data to the line
           .attr("class", "line") //assigns a class for styling
-          .attr("d", line) //calls the line generator
+          .attr("d", line); //calls the line generator
 
 
     //3 bedroom apartment
@@ -183,7 +182,7 @@
             .attr("transform", function(d) {
               console.log("translate(" + xScale(d.year) + "," + yScale(d.avg) +")");
               return "translate(" + xScale(d.year) + "," + yScale(d.avg) +")";
-            })
+            });
 
           household.append("circle")
             .attr("class", "dot")
@@ -192,19 +191,19 @@
         br1.append("text")
           .attr("dx", ".50em")
           .attr("dy",".90em")
-          .text(function(d){return "$"+ Math.round(d.avg)});
+          .text(function(d){return "$"+ Math.round(d.avg);});
 
 
         br3.append("text")
           .attr("dx", ".50em")
           .attr("dy",".90em")
-          .text(function(d){return "$"+ Math.round(d.avg)});
+          .text(function(d){return "$"+ Math.round(d.avg);});
 
 
         household.append("text")
           .attr("dx", ".50em")
           .attr("dy",".90em")
-          .text(function(d){return "$"+ Math.round(d.avg)});
+          .text(function(d){return "$"+ Math.round(d.avg);});
 
           svg.append("text")
             .attr("x", width)
@@ -249,4 +248,4 @@
 
 
 
-    })
+    });
