@@ -242,3 +242,11 @@ span.EastBoston_footer {
     fill: "black";
     stroke: #fff;
 }
+
+/* Map Styles
+–––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+#basemap path {
+  fill: gray;
+  stroke: black;
+}
