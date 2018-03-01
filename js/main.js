@@ -27,7 +27,7 @@
 
     console.log(thirtyPercent);
 
-    d3.csv("js/merged_rents.csv", function(error, rents){
+    d3.csv("data/merged_rents.csv", function(error, rents){
 
 
       // averages["test"] = 0;

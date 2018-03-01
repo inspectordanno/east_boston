@@ -16,42 +16,95 @@
     map.map = map.svg.append("g")
         .attr("transform","translate(" + map.margin.left + "," + map.margin.top + ")");
 
-d3.csv("js/merged_rents.csv", function(error, rents){
 
-  // 42.372684, -71.020409
+    map.slider = map.svg.append("g")
+        .call(slider1);
 
-  const mercatorProjection = d3.geoMercator() //scale
-        .scale(500000)
-        // .rotate([71.057, 0])
-        .center([-71.020409,  42.372684])
-        .translate([width/2,200]);
-
-  const geoPath = d3.geoPath() //generates path elements
-        .projection(mercatorProjection);
-
-  map.basemap = map.map
-    .append("g")
-    .attr("id", "basemap");
 
     map.points = map.map
-      .append("g")
-      .attr("id", "points");
+        .append("g")
+        .attr("id", "points");
 
-  map.basemap.selectAll("path")
-      .data(neighborhoods_json.features)
-      .enter()
-      .append("path")
-      .attr("d", geoPath); // path generator
+    //slider https://bl.ocks.org/johnwalley/e1d256b81e51da68f7feb632a53c3518
 
-  rents.forEach((d) => {
-      	 var xy = mercatorProjection([d.long, d.lat]);
-         console.log(xy);
-      	 var x  = xy[0];
-      	 var y = xy[1];
-         map.points.append("circle")
-          .attr("cx",x)
-          .attr("cy",y)
-          .attr("r",3)
-          .attr("fill","red");
-      	})
-});
+    var slider1 = d3.sliderHorizontal()
+       .min(d3.min(data1))
+       .max(d3.max(data1))
+       .width(300)
+       .tickFormat(d3.format('.2%'))
+       .ticks(5)
+       .default(0.015)
+       .on('onchange', val => {
+         d3.select("p#value1").text(d3.format('.2%')(val));
+       });
+
+    //basemap generation courtesy of https://github.com/shingyun/eastboston-evictions
+
+    const projection = d3.geoMercator(), //use geomercator projection
+        path = d3.geoPath().projection(projection); // create path based on project
+
+    projection
+    	.center([-71,42]) //center the project based on lat long
+    	.scale(350000);   //scale the projection
+
+    d3.queue() //queue the data
+      .defer(d3.csv, 'data/merged_rents.csv') //rent data
+      .defer(d3.csv, 'data/Boston_Neighborhoods.geojson') //Boston geojson
+      .await(dataLoaded); //wait until all data is loaded
+
+    function dataLoaded (err, rents, boston) { //create a function with variable error, rent data, and geojson
+      map.map.append("g") // append a new g element
+        .attr('class','baseMap') // give it a class of basemap
+        .attr('transform','translate(-75,3100)') // translate it relative to ?
+        .selectAll('.base') // select the .base class
+        .data(boston.features) // bind the geojson features
+        .enter() // enter the data
+        .append('path') // append a path
+        .attr('class','base') // give it a class of base
+        .attr('d',path) // give it a d attribute which is populated with the mercator projection
+    };
+
+    rents.forEach((d) => { // for each data point, loop through
+        	 var xy = mercatorProjection([d.long, d.lat]); //create a variable xy that creates two values based on the mercator projection output of the longitude and latitude of each point
+           console.log(xy); //console.log these values to see what they are
+        	 var x  = xy[0]; //put mercatored longitude values in x variable
+        	 var y = xy[1]; //put mercatored latitude values in y variable
+           map.points.append("circle") // append a circle to the points g element
+            .attr("cx",x) // cx position is mercatored longitude
+            .attr("cy",y) // cy position is mercatored latitude
+            .attr("r",3) // radius of 3
+            .attr("fill","red"); // color of red
+        	});
+
+
+
+
+
+
+
+//   map.basemap = map.map
+//     .append("g")
+//     .attr("id", "basemap");
+//
+//     map.points = map.map
+//       .append("g")
+//       .attr("id", "points");
+//
+//   map.basemap.selectAll("path")
+//       .data(neighborhoods_json.features)
+//       .enter()
+//       .append("path")
+//       .attr("d", geoPath); // path generator
+//
+//   rents.forEach((d) => {
+//       	 var xy = mercatorProjection([d.long, d.lat]);
+//          console.log(xy);
+//       	 var x  = xy[0];
+//       	 var y = xy[1];
+//          map.points.append("circle")
+//           .attr("cx",x)
+//           .attr("cy",y)
+//           .attr("r",3)
+//           .attr("fill","red");
+//       	})
+// });
