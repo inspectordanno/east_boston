@@ -16,10 +16,6 @@
     map.map = map.svg.append("g")
         .attr("transform","translate(" + map.margin.left + "," + map.margin.top + ")");
 
-    map.points = map.map
-        .append("g")
-        .attr("id", "points");
-
     //slider https://bl.ocks.org/johnwalley/e1d256b81e51da68f7feb632a53c3518
 
     var slider1 = d3.sliderHorizontal()
@@ -38,8 +34,8 @@
 
     //basemap generation courtesy of https://github.com/shingyun/eastboston-evictions
 
-    const projection = d3.geoMercator(), //use geomercator projection
-        path = d3.geoPath().projection(projection); // create path based on project
+    const projection = d3.geoMercator(); //use geomercator projection
+    const path = d3.geoPath().projection(projection); // create path based on projection
 
     projection
     	.center([-71,42]) //center the project based on lat long
@@ -47,17 +43,19 @@
 
     d3.queue() //queue the data
       .defer(d3.csv, 'data/merged_rents.csv') //rent data
-      .defer(d3.csv, 'data/Boston_Neighborhoods.geojson') //Boston geojson
+      .defer(d3.json, 'data/Boston_Neighborhoods.geojson') //Boston geojson
       .defer(d3.json,'data/eastBostonCensusTracts.geojson')
       .await(dataLoaded); //wait until all data is loaded
 
     function dataLoaded (err, rents, boston, eastie) { //create a function with variable error, rent data, and geojson
 
       //boston basemap
-      map.map.append("g") // append a new g element
+
+        map.map.append("g") // append a new g element
         .attr('class','baseMap') // give it a class of basemap
         .attr('transform','translate(-75,3100)') // translate it relative to ?
-        .selectAll('.base') // select the .base class
+        // console.log(boston.features);
+      .selectAll('.base') // select the .base class
         .data(boston.features) // bind the geojson features
         .enter() // enter the data
         .append('path') // append a path
@@ -65,9 +63,9 @@
         .attr('d',path); // give it a d attribute which is populated with the mercator projection
 
       //east boston basemap
-      map.map.append('g')
-        .attr('class','censusMap')
-        .attr('transform','translate(-75,3100)')
+        map.map.append('g')
+          .attr('class','censusMap')
+          .attr('transform','translate(-75,3100)')
 	        .selectAll('.censusTract')
 	        .data(eastie.features)
 	        .enter()
@@ -81,20 +79,37 @@
 		    // })
 		    .style('stroke-width','1.5px')
 		    .style('stroke','white')
-		    .style('opacity',0.85);
+		    .style('opacity',0.85)
+        .style('fill', 'white');
+
+        // points layer
+
+        map.points = map.map
+            .append("g")
+            .attr('transform','translate(-75,3100)')
+            .attr("id", "points");
 
 
       rents.forEach((d) => { // for each data point, loop through
-          	 var xy = mercatorProjection([d.long, d.lat]); //create a variable xy that creates two values based on the mercator projection output of the longitude and latitude of each point
+          console.log(d.lat);
+          	 var xy = projection([d.long, d.lat]); //create a variable xy that creates two values based on the mercator projection output of the longitude and latitude of each point
              console.log(xy); //console.log these values to see what they are
           	 var x  = xy[0]; //put mercatored longitude values in x variable
           	 var y = xy[1]; //put mercatored latitude values in y variable
+             // y = map.height/2;
              map.points.append("circle") // append a circle to the points g element
-              .attr("cx",x) // cx position is mercatored longitude
+              .attr("cx",function (d){
+                return projection([d.long, d.lat])[0];
+
+              }) // cx position is mercatored longitude
               .attr("cy",y) // cy position is mercatored latitude
               .attr("r",3) // radius of 3
               .attr("fill","red"); // color of red
           	});
+
+      function d {
+        return
+      }
 
       };
 
