@@ -90,26 +90,47 @@
             .attr("id", "points");
 
 
-      rents.forEach((d) => { // for each data point, loop through
-          console.log(d.lat);
-          	 var xy = projection([d.long, d.lat]); //create a variable xy that creates two values based on the mercator projection output of the longitude and latitude of each point
-             console.log(xy); //console.log these values to see what they are
-          	 var x  = xy[0]; //put mercatored longitude values in x variable
-          	 var y = xy[1]; //put mercatored latitude values in y variable
-             // y = map.height/2;
-             map.points.append("circle") // append a circle to the points g element
-              .attr("cx",function (d){
-                return projection([d.long, d.lat])[0];
 
-              }) // cx position is mercatored longitude
-              .attr("cy",y) // cy position is mercatored latitude
-              .attr("r",3) // radius of 3
-              .attr("fill","red"); // color of red
-          	});
+        var enterPoints = map.points
+          .selectAll("circle")
+          .data(rents)
+          .enter()
+          .append("circle")
+          .attr("cx", function(d){
+            return projection([d.long, d.lat])[0];
+          })
+          .attr("cy", function(d){
+            return projection([d.long, d.lat])[1];
+          })
+          .attr("r",3)
+          .attr("fill","red");
 
-      function d {
-        return
-      }
+      //fix enter update exit pattern    
+
+
+
+
+
+
+
+
+
+
+      // rents.forEach((d) => { // for each data point, loop through
+      //        console.log(d.lat);
+      //     	 var xy = projection([d.long, d.lat]); //create a variable xy that creates two values based on the mercator projection output of the longitude and latitude of each point
+      //        console.log(xy); //console.log these values to see what they are
+      //     	 var x  = xy[0]; //put mercatored longitude values in x variable
+      //     	 var y = xy[1]; //put mercatored latitude values in y variable
+      //        // y = map.height/2;
+      //        map.points.append("circle") // append a circle to the points g element
+      //         .attr("cx",function (d){
+      //           return projection([d.long, d.lat])[0];
+      //         }) // cx position is mercatored longitude
+      //         .attr("cy",y) // cy position is mercatored latitude
+      //         .attr("r",3) // radius of 3
+      //         .attr("fill","red"); // color of red
+      //     	});
 
       };
 
