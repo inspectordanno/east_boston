@@ -91,7 +91,7 @@
 
 
 
-        var enterPoints = map.points
+        var updatePoints = map.points
           .selectAll("circle")
           .data(rents)
           .enter()
@@ -105,7 +105,8 @@
           .attr("r",3)
           .attr("fill","red");
 
-      //fix enter update exit pattern    
+//change opacity with slider
+
 
 
 
