@@ -250,3 +250,13 @@ span.EastBoston_footer {
   fill: gray;
   stroke: black;
 }
+
+.threebedroom {
+  color: #189aa8;
+  font-weight: bold;
+}
+
+.onebedroom {
+  color: #aad356;
+  font-weight: bold;
+}

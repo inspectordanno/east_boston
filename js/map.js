@@ -1,4 +1,4 @@
-  const map = {}
+const map = {}
 
 // margin template from https://bl.ocks.org/d3noob/402dd382a51a4f6eea487f9a35566de0
 // set the dimensions and margins of the graph
