@@ -14,23 +14,53 @@ const map = {}
         .attr("height", map.height + map.margin.top + map.margin.bottom);
 
     map.map = map.svg.append("g")
-        .attr("transform","translate(" + map.margin.left + "," + map.margin.top + ")");
+        .attr("transform","scale(2)translate(" + map.margin.left + "," + map.margin.top + ")");
+
 
     //slider https://bl.ocks.org/johnwalley/e1d256b81e51da68f7feb632a53c3518
 
     var slider1 = d3.sliderHorizontal()
        // .min(d3.min(data1))
        // .max(d3.max(data1))
-       .width(300)
-       .tickFormat(d3.format('.2%'))
+       .width(500)
+       .min([20000])
+       .max([100000])
        .ticks(5)
-       .default(0.015)
-       .on('onchange', val => {
-         d3.select("p#value1").text(d3.format('.2%')(val));
-       });
+       .default(100000);
 
     map.slider = map.svg.append("g")
-           .call(slider1);
+      .attr('transform', 'translate(20, 10)')
+      .attr('height', 500)
+      .call(slider1);
+
+    slider1.on('onchange', val => {
+      console.log(val);
+      //calculate 30 percent of the val
+      monthlyThirtyPercentVal = (.30 * val) / 12;
+      // console.log(monthlyThirtyPercentVal);
+      // map.points.selectAll("circle").attr("opacity",1);
+      // map.points.selectAll("circle").filter(function(d){
+      //   return d.price > monthlyThirtyPercentVal;
+      // })
+      // .attr('opacity', 0);
+
+      map.points.selectAll("circle")
+        .attr("opacity", function(d) {
+            if(d.price > monthlyThirtyPercentVal) {
+                return 0;
+
+            } else {
+              return 1;
+            }
+
+        });
+      // const oneBedroom2017 = subset2017.filter(function(d){ //filters 2017 data with 1 bedroom
+      //   return d.no_bedrooms == 1;
+      // });
+
+
+
+    });
 
     //basemap generation courtesy of https://github.com/shingyun/eastboston-evictions
 
@@ -48,6 +78,26 @@ const map = {}
       .await(dataLoaded); //wait until all data is loaded
 
     function dataLoaded (err, rents, boston, eastie) { //create a function with variable error, rent data, and geojson
+
+      //get only 2017 data for 1 bedroom and 3 bedrooms
+
+      const subset2017 = rents.filter(function(d){ //filters only 2017 data
+        return d.year == 2017;
+      });
+
+      console.log(subset2017);
+
+      const oneBedroom2017 = subset2017.filter(function(d){ //filters 2017 data with 1 bedroom
+        return d.no_bedrooms == 1;
+      });
+
+      console.log(oneBedroom2017);
+
+      const threeBedroom2017 = subset2017.filter(function(d){ //filters 2017 data with 3 bedroom
+        return d.no_bedrooms == 3;
+      });
+
+      console.log(threeBedroom2017);
 
       //boston basemap
 
@@ -89,13 +139,36 @@ const map = {}
             .attr('transform','translate(-75,3100)')
             .attr("id", "points");
 
+        //
+        // var tpoints = map.points
+        //   .selectAll("circle")
+        //   .data(rents.filter(function(d) {
+        //       return (d.year == 2013 || d.year == 2017) && (d.no_bedrooms == 1 || d.no_bedrooms == 3);
+        //   }))
+        //   .enter()
+        //   .append("circle")
+        //   .attr("cx", function(d){
+        //     return projection([d.long, d.lat])[0];
+        //   })
+        //   .attr("cy", function(d){
+        //     return projection([d.long, d.lat])[1];
+        //   })
+        //   .attr("r",3)
+        //   .attr("fill",function(d) {
+        //       if(d.no_bedrooms == 1) {
+        //         return "green";
+        //       } else if(d.no_bedrooms == 3) {
+        //         return "blue";
+        //       }
+        //
+        //   });
 
-
-        var updatePoints = map.points
-          .selectAll("circle")
-          .data(rents)
+        var points1br = map.points
+          .selectAll(".circle1br")
+          .data(oneBedroom2017)
           .enter()
           .append("circle")
+          .attr("class","circle1br")
           .attr("cx", function(d){
             return projection([d.long, d.lat])[0];
           })
@@ -103,7 +176,29 @@ const map = {}
             return projection([d.long, d.lat])[1];
           })
           .attr("r",3)
-          .attr("fill","red");
+          .attr("fill","green");
+
+
+          var points3br = map.points
+            .selectAll(".circle3br")
+            .data(threeBedroom2017)
+            .enter()
+            .append("circle")
+            .attr("class","circle3br")
+            .attr("cx", function(d){
+              return projection([d.long, d.lat])[0];
+            })
+            .attr("cy", function(d){
+              return projection([d.long, d.lat])[1];
+            })
+            .attr("r",3)
+            .attr("fill","blue");
+
+
+
+
+//get the current value of the slider
+
 
 //change opacity with slider
 
