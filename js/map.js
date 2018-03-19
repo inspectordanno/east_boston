@@ -14,7 +14,7 @@ const map = {}
         .attr("height", map.height + map.margin.top + map.margin.bottom);
 
     map.map = map.svg.append("g")
-        .attr("transform","scale(2)translate(" + map.margin.left + "," + map.margin.top + ")");
+        .attr("transform","scale(1.75)translate(" + map.margin.left + "," + map.margin.top + ")");
 
 
     //slider https://bl.ocks.org/johnwalley/e1d256b81e51da68f7feb632a53c3518
@@ -23,7 +23,7 @@ const map = {}
        // .min(d3.min(data1))
        // .max(d3.max(data1))
        .width(500)
-       .min([20000])
+       .min([40000])
        .max([100000])
        .ticks(5)
        .default(100000);
@@ -176,7 +176,7 @@ const map = {}
             return projection([d.long, d.lat])[1];
           })
           .attr("r",3)
-          .attr("fill","green");
+          .attr("fill","#aad356");
 
 
           var points3br = map.points
@@ -192,7 +192,7 @@ const map = {}
               return projection([d.long, d.lat])[1];
             })
             .attr("r",3)
-            .attr("fill","blue");
+            .attr("fill","#189aa8");
 
 
 
